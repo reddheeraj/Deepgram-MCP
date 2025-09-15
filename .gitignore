@@ -1,0 +1,27 @@
+# Build artifacts
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+
+# Environment files
+.env
+env.*
+*.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+generated_audio/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Audio files for testing
+*.wav
+*.mp3
+*.m4a
+*.flac

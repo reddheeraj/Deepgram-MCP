@@ -1,0 +1,32 @@
+{
+  "name": "deepgram-mcp-server",
+  "version": "0.2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "deepgram-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && (shx chmod +x dist/*.js || echo 'chmod skipped on Windows')",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js --port 8081",
+    "start:stdio": "node dist/index.js --stdio",
+    "dev": "tsc && node dist/index.js",
+    "dev:stdio": "tsc && node dist/index.js --stdio",
+    "test:agno:tts": "python agno_tts_test.py",
+    "test:agno:stt": "python agno_stt_test.py"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "shx": "^0.3.4"
+  }
+}
