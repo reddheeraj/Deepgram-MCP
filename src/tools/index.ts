@@ -1,1 +1,6 @@
-export { createDeepgramTools, handleTranscribeAudio, handleTextToSpeech, handleAnalyzeAudio, handleGetModels } from './deepgram.js';
+export { 
+    createDeepgramTools, 
+    handleTranscribeAudio, 
+    handleTextToSpeech, 
+    handleAnalyzeAudio, 
+    handleGetModels } from './deepgram.js';
