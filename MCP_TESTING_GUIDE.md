@@ -5,7 +5,7 @@
 ✅ **Server is working correctly** - The Deepgram MCP server is running and accessible  
 ✅ **Health endpoint works** - `/health` returns proper status  
 ✅ **SSE endpoint works** - `/sse` is accessible for Server-Sent Events  
-⚠️ **MCP endpoint requires proper client** - `/mcp` needs MCP protocol compliance  
+✅ **MCP endpoint works** - `/mcp` is accessible by streaming agents  
 
 ## Issues Identified and Fixed
 
