@@ -6,6 +6,7 @@ import {
   AnalyzeAudioArgs,
   GetModelsArgs,
 } from "../types.js";
+import { compressAudioFile } from "../utils/compression.js";
 
 /**
  * Tool definition: transcribe_audio
@@ -120,6 +121,46 @@ export async function handleTextToSpeech(
       throw new Error("Invalid arguments for text_to_speech");
     }
     const result = await client.textToSpeech(args);
+    
+    // Compress the audio file if it was saved and store separately
+    let compressedAudioInfo = null;
+    if (result.filepath) {
+      try {
+        const compressedAudioData = await compressAudioFile(result.filepath);
+        
+        // Save compressed data to a separate file to avoid large responses
+        const { writeFileSync } = await import('fs');
+        const { join } = await import('path');
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const compressedFilename = `compressed_audio_${timestamp}.json`;
+        const compressedFilepath = join(process.cwd(), 'compressed_audio', compressedFilename);
+        
+        // Create compressed_audio directory if it doesn't exist
+        try {
+          const { mkdirSync } = await import('fs');
+          mkdirSync(join(process.cwd(), 'compressed_audio'), { recursive: true });
+        } catch (error) {
+          // Directory might already exist
+        }
+        
+        // Save compressed data to file
+        writeFileSync(compressedFilepath, JSON.stringify(compressedAudioData, null, 2));
+        
+        compressedAudioInfo = {
+          compressedFilename,
+          compressedFilepath,
+          originalFilename: compressedAudioData.originalFilename,
+          originalFormat: compressedAudioData.originalFormat,
+          compressionRatio: compressedAudioData.compressionRatio,
+          originalSize: compressedAudioData.originalSize,
+          compressedSize: compressedAudioData.compressedSize,
+          decompressionInstructions: `To decompress: python decompress_audio.py "${compressedFilepath}"`
+        };
+      } catch (compressionError) {
+        console.warn(`Failed to compress audio file: ${compressionError}`);
+      }
+    }
+    
     const summary = {
       success: true,
       format: result.format,
@@ -131,6 +172,7 @@ export async function handleTextToSpeech(
       message: result.filename && result.filepath
         ? `Audio file saved: ${result.filename} at ${result.filepath}`
         : "Audio generated",
+      compressedAudioInfo: compressedAudioInfo
     };
     return { content: [{ type: "text", text: JSON.stringify(summary, null, 2) }], isError: false };
   } catch (error) {

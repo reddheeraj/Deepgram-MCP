@@ -18,7 +18,8 @@
     "dev": "tsc && node dist/index.js",
     "dev:stdio": "tsc && node dist/index.js --stdio",
     "test:agno:tts": "python agno_tts_test.py",
-    "test:agno:stt": "python agno_stt_test.py"
+    "test:agno:stt": "python agno_stt_test.py",
+    "decompress": "node decompress_audio.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",

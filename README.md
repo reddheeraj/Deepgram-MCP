@@ -5,11 +5,12 @@ A Model Context Protocol (MCP) server that provides access to Deepgram's speech 
 ## Features
 
 - **Audio Transcription**: Convert audio to text with high accuracy
-- **Text-to-Speech**: Generate natural-sounding speech from text
+- **Text-to-Speech**: Generate natural-sounding speech from text with automatic compression
 - **Audio Analysis**: Extract insights like sentiment, topics, intents, and entities
 - **Speaker Diarization**: Identify different speakers in audio
 - **Language Detection**: Automatically detect the language of audio
 - **Multiple Models**: Support for various Deepgram models optimized for different use cases
+- **Smart Audio Compression**: Automatically compresses generated audio files for efficient transfer
 
 ## Installation
 
@@ -21,7 +22,7 @@ A Model Context Protocol (MCP) server that provides access to Deepgram's speech 
 3. Copy the environment file and add your Deepgram API key:
    ```bash
    cp env.example .env
-   # Edit .env and add your DEEPGRAM_API_KEY
+   # Edit .env and add your DEEPGRAM_API_KEY, OPENAI_API_KEY or GROQ_API_KEY (whatever you want to use)
    ```
 4. Build the project:
    ```bash
@@ -67,7 +68,7 @@ Transcribe audio to text with various options for customization.
 - And many more options...
 
 ### 2. text_to_speech
-Convert text to speech using Deepgram's TTS models.
+Convert text to speech using Deepgram's TTS models with automatic compression.
 
 **Parameters:**
 - `text`: Text to convert to speech (required)
@@ -75,6 +76,11 @@ Convert text to speech using Deepgram's TTS models.
 - `voice`: Voice selection
 - `format`: Output format (default: "mp3")
 - `speed`: Speech speed (default: 1.0)
+
+**Output:**
+- Original audio file saved to `generated_audio/` folder
+- Compressed audio data saved to `compressed_audio/` folder
+- Response includes file paths and compression metadata
 
 ### 3. analyze_audio
 Perform advanced audio analysis including sentiment, topics, intents, and entities.
@@ -121,19 +127,60 @@ npm run dev
 
 Get your Deepgram API key from [Deepgram Console](https://console.deepgram.com/).
 
+## Audio Compression System
+
+The TTS functionality includes an intelligent compression system that:
+
+- **Automatically compresses** generated audio files using gzip compression
+- **Saves compressed data** to separate files to avoid large agent responses
+- **Provides decompression tools** for easy audio file extraction
+- **Maintains quality** while reducing file sizes by 2-4x
+
+### File Structure
+```
+generated_audio/          # Original audio files
+├── tts_2025-01-16T...mp3
+
+compressed_audio/         # Compressed audio data
+├── compressed_audio_2025-01-16T...json
+
+decompressed_audio/       # Decompressed audio files (after extraction)
+├── decompressed_2025-01-16T...mp3
+```
+
+### Decompression Tools
+
+**Python Script (Recommended):**
+```bash
+python decompress_audio.py <response_file_or_compressed_file>
+```
+
+**Node.js Script:**
+```bash
+npm run decompress <compressed_data_file>
+```
+
 ## Agno Integration
 
 This MCP server also includes integration with [Agno](https://docs.agno.com/introduction), a high-performance runtime for multi-agent systems.
 
 ### Agno Tests
 ```bash
-# Text-to-Speech test (saves audio to generated_audio/)
+# Text-to-Speech test (saves audio to generated_audio/ and compressed_audio/)
 npm run test:agno:tts
 
 # Speech-to-Text test (transcribes sample audio)
 npm run test:agno:stt
 ```
 
+The TTS test will:
+1. Generate audio with automatic compression
+2. Save the response to `tts_response.json`
+3. Decompress the audio file to `generated_audio/`
+
 ## License
 
 MIT
+
+## Developer
+- Dheeraj Mudireddy (meetdheerajreddy@gmail.com)
